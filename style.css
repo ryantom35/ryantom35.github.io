@@ -1,0 +1,97 @@
+/* CSS Variables (theme) */
+:root {
+    --bg: #f7f7fb;
+    --text: #1f2330;
+    --muted: #5a6275;
+    --brand: #3366ff;
+    --brand-contrast: #ffffff;
+    --card: #ffffff;
+    --border: #e6e8f0;
+    --radius: 14px;
+    --shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+  }
+  
+  /* CSS Reset (light) */
+  *,
+  *::before,
+  *::after { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  img { max-width: 100%; display: block; }
+  
+  /* Base */
+  html { font-size: 16px; }
+  body {
+    font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    color: var(--text);
+    background: var(--bg);
+    line-height: 1.6;
+  }
+  
+  .container {
+    max-width: 960px;
+    margin: 40px auto;
+    padding: 0 20px;
+  }
+  
+  h1, h2, h3 {
+    line-height: 1.25;
+    margin: 0 0 0.6em;
+  }
+  
+  p { color: var(--muted); margin: 0 0 1em; }
+  
+  /* Links / Buttons */
+  a {
+    color: var(--brand);
+    text-decoration: none;
+  }
+  a:hover { text-decoration: underline; }
+  
+  .btn {
+    display: inline-block;
+    padding: 10px 14px;
+    background: var(--brand);
+    color: var(--brand-contrast);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    text-decoration: none;
+    font-weight: 600;
+  }
+  .btn:hover { filter: brightness(0.96); text-decoration: none; }
+  
+  /* Project grid (for your homepage) */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 16px;
+    margin-top: 16px;
+    justify-content: center;
+  }
+  
+  /* Card */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+    transition: transform 120ms ease, box-shadow 120ms ease;
+    
+  }
+  .card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 24px rgba(0,0,0,0.08);
+  }
+  .card__body { padding: 16px;
+    text-align: center; }
+  .card__title { margin: 0 0 6px; font-size: 1.1rem; }
+  .card__meta { color: var(--muted); font-size: 0.9rem; }
+  
+  /* Utilities */
+  .center { text-align: center; }
+  .m-0 { margin: 0 !important; }
+  .mt-2 { margin-top: 0.5rem !important; }
+  .mt-4 { margin-top: 1rem !important; }
+  .mb-4 { margin-bottom: 1rem !important; }
+  .round { border-radius: var(--radius); }
+  
