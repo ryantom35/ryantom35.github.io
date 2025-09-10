@@ -1,40 +1,63 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Ryan's Portfolio</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Ryan Tom — CS180 Portfolio</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f8f9fa;
-            text-align: center;
-            margin: 20px;
-        }
-        h1 {
-            color: #333;
-        }
-        a {
-            display: block;
-            margin: 10px 0;
-            color: #007BFF;
-            text-decoration: none;
-            font-size: 18px;
-        }
-        a:hover {
-            text-decoration: underline;
-        }
-        img {
-            width: 300px;
-            border-radius: 10px;
-            margin-top: 15px;
-        }
+        /* Page-scoped styles to keep changes self-contained */
+        /* New color scheme: soft teal + indigo accents */
+    :root{ --bg:#f5fbfb; --card:#ffffff; --muted:#51606a; --brand:#0b7285; --accent:#5b4dff; --border:rgba(11,114,133,0.08); --text:#0f1724 }
+    html,body{height:100%;margin:0;font-family:Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial; color:var(--text);background:var(--bg)}
+        .wrap{max-width:980px;margin:48px auto;padding:28px}
+        header{display:flex;align-items:center;justify-content:space-between;gap:12px}
+        .title{line-height:1}
+        h1{margin:0;font-size:1.6rem}
+        p.lead{margin:6px 0 0;color:var(--muted)}
+
+        .projects{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:18px;margin-top:28px}
+    .card{background:var(--card);border-radius:12px;padding:18px;border:1px solid var(--border);box-shadow:0 8px 24px rgba(16,24,40,0.04);transition:transform .14s ease,box-shadow .14s ease}
+    .card:hover{transform:translateY(-6px);box-shadow:0 18px 48px rgba(16,24,40,0.08)}
+    .card a{display:block;color:var(--accent);font-weight:700;text-decoration:none;font-size:1.05rem}
+    a{color:var(--brand)}
+    a:hover{color:var(--accent)}
+    h1,h2{color:var(--text)}
+        .card p{margin:8px 0 0;color:var(--muted);font-size:0.95rem}
+
+        footer{margin-top:28px;color:var(--muted);font-size:0.9rem}
+
+        @media (max-width:520px){ .wrap{margin:20px 18px;padding:18px} h1{font-size:1.3rem} }
     </style>
 </head>
 <body>
-    <h1>Welcome to Ryan Tom's CS180 Portfolio!</h1>
-    <h4>This page will contain all projects for UC Berkeley's Fall 2025 Intro to Computer Vision and Computational Photography Course</h4>
-<div class="project-container">
-    <a class="project-title" href="./proj0/index.html">Project 0</a>
-    <a class="project-title" href="./proj1/index.html">Project 1</a>
-</div>
+    <div class="wrap">
+        <header>
+            <div class="title">
+                <h1>Ryan Tom — CS180 Portfolio</h1>
+                <p class="lead">Projects for UC Berkeley's Fall 2025 Intro to Computer Vision & Computational Photography</p>
+            </div>
+            <div class="meta center">
+                <p style="margin:0;color:var(--muted)">Ryan Tom</p>
+            </div>
+        </header>
+
+        <main>
+            <section class="projects" aria-label="projects">
+                <article class="card">
+                    <a href="./proj0/index.html">Project 0: Becoming Friends with Your Camera</a>
+                    <p>Introductory camera studies: selfies, perspective compression, and a dolly zoom demo.</p>
+                </article>
+
+                <article class="card">
+                    <a href="./proj1/index.html">Project 1: Images of the Russian Empire</a>
+                    <p>Taking digitized Prokudin-Gorskii glass plate images and, using image processing techniques, automatically produce a color image.</p>
+                </article>
+            </section>
+        </main>
+
+        <footer>
+            <p style="margin:0;color:var(--muted);">Built for CS180</p>
+        </footer>
+    </div>
 </body>
 </html>
