@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project 2: Fun with Filters and Frequencies</title>
+    <link rel="stylesheet" href="../style.css">
+    <style>
+        .project-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .section {
+            margin-bottom: 40px;
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 8px;
+        }
+        
+        .image-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        .image-item {
+            flex: 1;
+            min-width: 300px;
+            text-align: center;
+        }
+        
+
+        
+        .image-caption {
+            margin-top: 10px;
+            font-style: italic;
+            color: #666;
+        }
+        
+        .code-block {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 20px 0;
+            font-family: 'Fira Code', 'Cascadia Code', 'JetBrains Mono', 'Consolas', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+            border: 1px solid #333;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            white-space: pre;
+            tab-size: 4;
+            word-wrap: normal;
+        }
+        
+        .code-block .keyword { color: #569cd6; }
+        .code-block .string { color: #ce9178; }
+        .code-block .comment { color: #6a9955; font-style: italic; }
+        .code-block .function { color: #dcdcaa; }
+        .code-block .number { color: #b5cea8; }
+        .code-block .operator { color: #d4d4d4; }
+        .code-block .variable { color: #9cdcfe; }
+        
+        .comment-section {
+            background: #fff;
+            padding: 15px;
+            border-left: 4px solid #007acc;
+            margin: 20px 0;
+        }
+        
+        .threshold-comparison {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        /* Navigation Button Styles */
+        .nav-button {
+            background: #007acc;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            transition: background-color 0.3s ease;
+            margin-bottom: 20px;
+        }
+        
+        .nav-button:hover {
+            background: #005a9e;
+            color: white;
+            text-decoration: none;
+        }
+        
+        /* Improved Image Sizing */
+        .image-item img {
+            width: 100%;
+            max-width: 400px;
+            height: 300px;
+            object-fit: cover;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        
+        /* Special sizing for different types of images */
+        .image-item.small img {
+            height: 200px;
+        }
+        
+        .image-item.large img {
+            height: 400px;
+        }
+        
+        .image-item.square img {
+            height: 300px;
+            object-fit: contain;
+        }
+    </style>
+</head>
+<body>
+    <div class="project-container">
+        <header>
+            <a href="../index.html" class="nav-button">← Back to Portfolio</a>
+            <h1>Project 2: Fun with Filters and Frequencies</h1>
+            <p>Computer Science 180 - Intro to Computer Vision and Computational Photography</p>
+        </header>
+
+        <!-- Part 1.1: Convolutions from Scratch -->
+        <section class="section">
+            <h2>Part 1.1: Convolutions from Scratch!</h2>
+            <p>In this section, I implemented convolution from scratch using numpy operations. The goal was to understand the fundamentals of convolution and compare different implementation approaches.</p>
+            
+            <h3>Convolution Implementation</h3>
+            <p>I implemented two versions of convolution: a naive approach with four nested loops and an optimized version using numpy operations and only 2 for loops.</p>
+            
+            <div class="code-block">
+<span class="keyword">def</span> <span class="function">naive_convolve</span>(<span class="variable">img</span>, <span class="variable">kernel</span>):
+    <span class="string">"""A naive implementation of 2D convolution with four nested loops"""</span>
+    <span class="variable">kernel_size</span> = <span class="variable">kernel</span>.shape[<span class="number">0</span>]
+    <span class="variable">pad</span> = (<span class="variable">kernel_size</span> <span class="operator">-</span> <span class="number">1</span>) <span class="operator">//</span> <span class="number">2</span>
+    <span class="variable">padded</span> = <span class="variable">np</span>.pad(<span class="variable">img</span>, ((<span class="variable">pad</span>, <span class="variable">pad</span>), (<span class="variable">pad</span>, <span class="variable">pad</span>)), 
+                          mode=<span class="string">'constant'</span>, constant_values=<span class="number">0.0</span>)
+
+    <span class="variable">H</span>, <span class="variable">W</span> = <span class="variable">img</span>.shape
+    <span class="variable">out</span> = <span class="variable">np</span>.zeros((<span class="variable">H</span>, <span class="variable">W</span>), dtype=<span class="variable">np</span>.float64)
+
+
+    <span class="keyword">for</span> <span class="variable">i</span> <span class="keyword">in</span> <span class="function">range</span>(<span class="variable">H</span>):
+        <span class="keyword">for</span> <span class="variable">j</span> <span class="keyword">in</span> <span class="function">range</span>(<span class="variable">W</span>):
+            <span class="variable">total</span> = <span class="number">0.0</span>
+            <span class="keyword">for</span> <span class="variable">m</span> <span class="keyword">in</span> <span class="function">range</span>(<span class="variable">kernel_size</span>):
+                <span class="keyword">for</span> <span class="variable">n</span> <span class="keyword">in</span> <span class="function">range</span>(<span class="variable">kernel_size</span>):
+                    <span class="variable">total</span> <span class="operator">+=</span> <span class="variable">padded</span>[<span class="variable">i</span><span class="operator">+</span><span class="variable">m</span>, <span class="variable">j</span><span class="operator">+</span><span class="variable">n</span>] <span class="operator">*</span> <span class="variable">kernel</span>[<span class="variable">m</span>, <span class="variable">n</span>]
+            <span class="variable">out</span>[<span class="variable">i</span>, <span class="variable">j</span>] = <span class="variable">total</span>
+    <span class="keyword">return</span> <span class="variable">out</span>
+
+
+<span class="keyword">def</span> <span class="function">convolve</span>(<span class="variable">img</span>, <span class="variable">kernel</span>):
+    <span class="string">"""Optimized convolution implementation using 2 for loops and numpy operations"""</span>
+    <span class="variable">img</span> = <span class="variable">np</span>.asarray(<span class="variable">img</span>, dtype=<span class="variable">np</span>.float64)
+    <span class="variable">kh</span>, <span class="variable">kw</span> = <span class="variable">kernel</span>.shape
+    
+    <span class="variable">pad_h</span> = (<span class="variable">kh</span> <span class="operator">-</span> <span class="number">1</span>) <span class="operator">//</span> <span class="number">2</span>
+    <span class="variable">pad_w</span> = (<span class="variable">kw</span> <span class="operator">-</span> <span class="number">1</span>) <span class="operator">//</span> <span class="number">2</span>
+    
+    <span class="variable">padded</span> = <span class="variable">np</span>.pad(<span class="variable">img</span>, ((<span class="variable">pad_h</span>, <span class="variable">pad_h</span>), (<span class="variable">pad_w</span>, <span class="variable">pad_w</span>)), 
+                          mode=<span class="string">'constant'</span>, constant_values=<span class="number">0.0</span>)
+    <span class="variable">kernel</span> = <span class="variable">np</span>.asarray(<span class="variable">kernel</span>, dtype=<span class="variable">np</span>.float64)
+    <span class="variable">kernel</span> = <span class="variable">kernel</span>[::<span class="operator">-</span><span class="number">1</span>, ::<span class="operator">-</span><span class="number">1</span>]  <span class="comment"># flip for convolution</span>
+
+    <span class="variable">H</span>, <span class="variable">W</span> = <span class="variable">img</span>.shape
+    <span class="variable">out</span> = <span class="variable">np</span>.empty_like(<span class="variable">img</span>, dtype=<span class="variable">np</span>.float64)
+
+    <span class="keyword">for</span> <span class="variable">i</span> <span class="keyword">in</span> <span class="function">range</span>(<span class="variable">H</span>):
+        <span class="keyword">for</span> <span class="variable">j</span> <span class="keyword">in</span> <span class="function">range</span>(<span class="variable">W</span>):
+            <span class="variable">window</span> = <span class="variable">padded</span>[<span class="variable">i</span>:<span class="variable">i</span><span class="operator">+</span><span class="variable">kh</span>, <span class="variable">j</span>:<span class="variable">j</span><span class="operator">+</span><span class="variable">kw</span>] 
+            <span class="variable">out</span>[<span class="variable">i</span>, <span class="variable">j</span>] = <span class="variable">np</span>.sum(<span class="variable">window</span> <span class="operator">*</span> <span class="variable">kernel</span>)
+    <span class="keyword">return</span> <span class="variable">out</span>
+            </div>
+
+            <h3>Box Filter Results</h3>
+            <p>Applied a 9x9 box filter to my headshot image for smoothing:</p>
+            
+            <div class="image-container">
+                <div class="image-item">
+                    <img src="images/original_headshot_gray.png" alt="Original Headshot">
+                    <div class="image-caption">Original Image</div>
+                </div>
+                <div class="image-item">
+                    <img src="images/headshot_smoothed.png" alt="Box Filter Result">
+                    <div class="image-caption">9x9 Box Filter Result</div>
+                </div>
+            </div>
+
+            <div class="comment-section">
+                <h4>Comments:</h4>
+                <p>Both the Naive and optimized box filter results had long runtimes, which is expected as I uploaded
+                    a high quality image and the box filter is not very efficient. The optimized version was faster, but still not ideal for real-time applications as
+                    no there still existed 2 for loops that scanned over every pixel without the use of parallelism and vectorization. 
+                    Scipy.signal.convolve2d was significantly faster due to its underlying optimizations and use of efficient libraries, but the results of this are not shown here.
+                    Scipy.signal.convolve2d also has the option to change how boundaries are handled, with options to pad with zeros, replicate edge pixels, or wrap around.
+                     This can affect the output image, especially near the borders.
+                </p>
+            </div>
+
+            <h3>Finite Difference Operators</h3>
+            <p>Applied Dx and Dy operators to detect edges in different directions:</p>
+            
+            <div class="image-container">
+                <div class="image-item">
+                    <img src="images/headshot_dx.png" alt="Dx Result">
+                    <div class="image-caption">Dx (Horizontal Edges)</div>
+                </div>
+                <div class="image-item">
+                    <img src="images/headshot_dy.png" alt="Dy Result">
+                    <div class="image-caption">Dy (Vertical Edges)</div>
+                </div>
+            </div>
+
+            <div class="comment-section">
+                <h4>Comments:</h4>
+                <p>The partial derivatives dx and dy were calcualted by taking the np.array([[-1, 0, 1]]), and scanning that either Horizontally or Vertically
+                    respectively. This was done to calculate the change in pixel intensity in both directions; however, the image I selected (headshot)
+                did not perform that well as the background of the picture had already been blurred to emulate a "portrait" style picture. </p>
+            </div>
+        </section>
+
+        <!-- Part 1.2: Finite Difference Operator -->
+        <section class="section">
+            <h2>Part 1.2: Finite Difference Operator</h2>
+            <p>Using the cameraman image, I computed partial derivatives and the gradient magnitude to create an edge detector.</p>
+
+            <h3>Partial Derivatives</h3>
+            <div class="image-container">
+                <div class="image-item">
+                    <img src="images/cameraman_original.png" alt="Original Cameraman">
+                    <div class="image-caption">Original Cameraman Image</div>
+                </div>
+                <div class="image-item">
+                    <img src="images/cameraman_dx.png" alt="Cameraman Dx">
+                    <div class="image-caption">Partial Derivative in X</div>
+                </div>
+                <div class="image-item">
+                    <img src="images/cameraman_dy.png" alt="Cameraman Dy">
+                    <div class="image-caption">Partial Derivative in Y</div>
+                </div>
+            </div>
+
+            <h3>Gradient Magnitude</h3>
+            <div class="image-container">
+                <div class="image-item">
+                    <img src="images/cameraman_gradient_magnitude.png" alt="Gradient Magnitude">
+                    <div class="image-caption">Gradient Magnitude</div>
+                </div>
+            </div>
+
+            <div class="comment-section">
+                <h4>Comments:</h4>
+                <p> I implented the gradient magnitude by taking the square root of the sum of the squares of the partial derivatives in both the x and y directions.
+                    This effectively combines the information from both directions to highlight areas of significant intensity change, which correspond to edges in the image.
+                    The resulting gradient magnitude image shows a clear representation of the edges present in the original cameraman image, with brighter areas indicating stronger edges.
+                    Overall, this method provides a comprehensive way to detect edges by considering changes in all directions.
+                </p>
+            </div>
+
+            <h3>Edge Detection with Thresholding</h3>
+            <p>I experimented with different thresholds to create binary edge maps:</p>
+            
+            <div class="threshold-comparison">
+                <div class="image-item">
+                    <img src="images/cameraman_binarized_edges.png" alt="Threshold 25">
+                    <div class="image-caption">Threshold = 25</div>
+                </div>
+               </div>
+
+            <div class="comment-section">
+                <h4>Threshold Selection Comments:</h4>
+                <p> There exists a trade off between finding all the edges and removing noise within the gradient magnitude approach, which my implementation
+                    was forced to deal with. After much trial and error, I found that a threshold of 25 worked best to capture the main edges of the image while minimizing noise.
+                    This was because the original algorithm performed relativley well in detecting edges, so a less aggressive threshold was sufficient to capture the main essense of the image.
+            </div></p>
+            </div>
+        </section>
+
+        <!-- Part 1.3: Derivative of Gaussian (DoG) Filter -->
+        <section class="section">
+            <h2>Part 1.3: Derivative of Gaussian (DoG) Filter</h2>
+            <p>To reduce noise in edge detection, I applied Gaussian smoothing before computing derivatives.</p>
+
+            <h3>Two-Step Approach: Gaussian then Derivatives</h3>
+            <p>First, I smoothed the image with a Gaussian filter, then applied the finite difference operators:</p>
+
+            <div class="image-container">
+                <div class="image-item">
+                    <img src="images/cameraman_gaussian.png" alt="Gaussian Smoothed">
+                    <div class="image-caption">Gaussian Smoothed Image</div>
+                </div>
+                <div class="image-item">
+                    <img src="images/cameraman_gaussian_gradient.png" alt="Gaussian then Gradient">
+                    <div class="image-caption">Gradient after Gaussian Smoothing</div>
+                </div>
+            </div>
+
+            <div class="comment-section">
+                <h4>Comments:</h4>
+                <p>The filters do appear to be a bit less precise, which is justified as the guassian was applied
+                    before the gradient magnitude was calculated. While some fine details may be lost due to the blurring effect of the Gaussian filter,
+                    the overall edge detection becomes more robust and less susceptible to noise-induced artifacts.
+                </p>
+            </div>
+
+            <h3>Single-Step Approach: Derivative of Gaussian</h3>
+            <p>Instead of two separate convolutions, I created derivative of Gaussian filters for single-step edge detection:</p>
+
+            <div class="code-block">
+<span class="keyword">def</span> <span class="function">create_DoG</span>(<span class="variable">ksize</span>: <span class="keyword">int</span> = <span class="number">9</span>, <span class="variable">sigma</span>: <span class="keyword">float</span> = <span class="number">1.0</span>):
+    <span class="string">"""Build 2D DoG filters:
+      DoGx = g'(x) * g(y).T
+      DoGy = g(x) * g'(y).T"""</span>
+    <span class="variable">gaussian_kernel</span> = <span class="variable">cv2</span>.getGaussianKernel(ksize=<span class="variable">ksize</span>, sigma=<span class="variable">sigma</span>)
+    <span class="variable">m</span> = <span class="variable">ksize</span> <span class="operator">//</span> <span class="number">2</span>
+    <span class="variable">x</span> = <span class="variable">np</span>.arange(<span class="operator">-</span><span class="variable">m</span>, <span class="variable">m</span><span class="operator">+</span><span class="number">1</span>, dtype=<span class="variable">np</span>.float64).reshape(<span class="operator">-</span><span class="number">1</span>, <span class="number">1</span>)
+    <span class="variable">dg</span> = <span class="operator">-</span>(<span class="variable">x</span> <span class="operator">/</span> (<span class="variable">sigma</span><span class="operator">**</span><span class="number">2</span>)) <span class="operator">*</span> <span class="variable">gaussian_kernel</span>
+
+    <span class="variable">DoGx</span> = <span class="variable">dg</span> <span class="operator">@</span> <span class="variable">gaussian_kernel</span>.T
+    <span class="variable">DoGy</span> = <span class="variable">gaussian_kernel</span> <span class="operator">@</span> <span class="variable">dg</span>.T
+    <span class="keyword">return</span> <span class="variable">DoGx</span>, <span class="variable">DoGy</span>
+            </div>
+
+            <h3>DoG Filter Visualization</h3>
+            <div class="image-container">
+                <div class="image-item">
+                    <img src="images/DoGx_filter.png" alt="DoGx Filter">
+                    <div class="image-caption">DoGx Filter</div>
+                </div>
+                <div class="image-item">
+                    <img src="images/DoGy_filter.png" alt="DoGy Filter">
+                    <div class="image-caption">DoGy Filter</div>
+                </div>
+            </div>
+
+            <h3>Single-Step DoG Results</h3>
+            <div class="image-container">
+                <div class="image-item">
+                    <img src="images/cameraman_DoG_gradient.png" alt="DoG Result">
+                    <div class="image-caption">Single-Step DoG Result</div>
+                </div>
+            </div>
+
+
+            <div class="comment-section">
+                <h4>Overall Analysis:</h4>
+                <p>The DoG Results are identical to those produced above in the 2 step approach, except the
+                    processing was condensed into 1 single step. This is convoling with the derivative of a gaussian
+                in both x and y directions, which brings the same benefits in reducing noise as highlighted above. This produced a
+            more robust edge detector compared to traditional methods that do not utilize gaussian smoothing as outliers
+        can heavily impact this strategy. </p>
+            </div>
+        </section>
+
+        <!-- Part 2: Fun with Frequencies! -->
+        <section class="section">
+            <h1>Part 2: Fun with Frequencies!</h1>
+            <p>In this part, we explore image sharpening, hybrid images, and multi-resolution blending using frequency domain techniques.</p>
+        </section>
+
+        <!-- Part 2.1: Image "Sharpening" -->
+        <section class="section">
+            <h2>Part 2.1: Image "Sharpening"</h2>
+            <p>The unsharp mask filter enhances image sharpness by emphasizing high-frequency components. The process involves:</p>
+            <ol>
+                <li>Apply Gaussian blur to create a low pass filtered image</li>
+                <li>Subtract blurred image from original to get high frequencies (orignal - low) leaves only high frequencies remaining</li>
+                <li>Add scaled high frequencies back to the original image</li>
+            </ol>
+            
+            <div class="code-block">
+<span class="keyword">def</span> <span class="function">sharpen_img</span>(<span class="variable">img</span>, <span class="variable">ksize</span>=<span class="number">9</span>, <span class="variable">sigma</span>=<span class="number">1.0</span>, <span class="variable">alpha</span>=<span class="number">1.0</span>):
+    <span class="variable">gaussian_kernel</span> = <span class="variable">cv2</span>.getGaussianKernel(ksize=<span class="variable">ksize</span>, sigma=<span class="variable">sigma</span>)
+    <span class="variable">row</span> = <span class="variable">gaussian_kernel</span>.T
+    <span class="variable">gaussian_2d</span> = <span class="variable">np</span>.dot(<span class="variable">gaussian_kernel</span>, <span class="variable">row</span>)
+
+    <span class="variable">sharpened_img</span> = <span class="variable">np</span>.zeros_like(<span class="variable">img</span>, dtype=<span class="variable">np</span>.uint8)
+    <span class="keyword">for</span> <span class="variable">channel</span> <span class="keyword">in</span> <span class="function">range</span>(<span class="number">3</span>):
+        <span class="variable">img_channel</span> = <span class="variable">img</span>[..., <span class="variable">channel</span>]
+        <span class="variable">blurred</span> = <span class="function">convolve</span>(<span class="variable">img_channel</span>, <span class="variable">gaussian_2d</span>)
+        <span class="variable">high_freq</span> = <span class="variable">img_channel</span> <span class="operator">-</span> <span class="variable">blurred</span>
+        <span class="variable">sharpened</span> = <span class="variable">img_channel</span> <span class="operator">+</span> <span class="variable">alpha</span> <span class="operator">*</span> <span class="variable">high_freq</span>
+        <span class="variable">sharpened</span> = <span class="variable">np</span>.clip(<span class="variable">sharpened</span>, <span class="number">0</span>, <span class="number">255</span>).astype(<span class="variable">np</span>.uint8)
+        <span class="variable">sharpened_img</span>[..., <span class="variable">channel</span>] = <span class="variable">sharpened</span>
+    <span class="keyword">return</span> <span class="variable">sharpened_img</span>
+            </div>
+
+            <h3>Taj Mahal Sharpening Example</h3>
+            <div class="image-container">
+                <div class="image-item">
+                    <img src="images/taj_original.png" alt="Original Taj">
+                    <div class="image-caption">Original Taj Mahal</div>
+                </div>
+                <div class="image-item">
+                    <img src="images/taj_blurred.png" alt="Blurred Taj">
+                    <div class="image-caption">Blurred (Low-pass)</div>
+                </div>
+                <div class="image-item">
+                    <img src="images/taj_high_freq.png" alt="High Freq Taj">
+                    <div class="image-caption">High Frequencies</div>
+                </div>
+                <div class="image-item">
+                    <img src="images/taj_sharpened.png" alt="Sharpened Taj">
+                    <div class="image-caption">Sharpened Result @ alpha = 1.0</div>
+                </div>
+                <div class="image-item">
+                    <img src="images/taj_sharpened_more.png" alt="Sharpened Taj">
+                    <div class="image-caption">Sharpened Result @ alpha = 2.0</div>
+                </div>
+            </div>
+              <div class="comment-section">
+                <h4>Overall Analysis:</h4>
+                <p> By extracting the high frequencies through the methodology explained above, (create low pass filter than subtract from orignal image)
+                    The more rich and detailed changes in frequency were able to be amplified on the resulting image, which to our eyes
+                can appear more of "higher quality." However, this is only to a certain extent as increasing the magnitude to which these
+            high frequencies were added (value for alpha) can make the abrupt changes in pixel intesnity to abrupt and noticable, which can be most
+        easily demontrated with the alpha = 2.0 example for the Taj Mahal. </p>
+            </div>
+        </section>
+
+            <h3>Additional Sharpening Examples</h3>
+            <div class="image-container">
+                <div class="image-item">
+                    <img src="images/festival_original.png" alt="Festival Original">
+                    <div class="image-caption">Festival - Original</div>
+                </div>
+                <div class="image-item">
+                    <img src="images/festival_sharpened.png" alt="Festival Sharpened">
+                    <div class="image-caption">Festival - Sharpened</div>
+                </div>
+                <div class="image-item">
+                    <img src="images/sphere_original.png" alt="Sphere Original">
+                    <div class="image-caption">Sphere - Original</div>
+                </div>
+                <div class="image-item">
+                    <img src="images/sphere_sharpened.png" alt="Sphere Sharpened">
+                    <div class="image-caption">Sphere - Sharpened</div>
+                </div>
+                 <div class="image-item">
+                    <img src="images/edc_original.png" alt="Sphere Sharpened">
+                    <div class="image-caption">EDC Kinetic Field - Original </div>
+                </div>
+                 <div class="image-item">
+                    <img src="images/edc_sharpened.png" alt="Sphere Sharpened">
+                    <div class="image-caption">EDC Kinetic Field - Sharpened</div>
+                </div>
+            </div>
+    
+            <div class="comment-section">
+                <h4>Sharpening Analysis:</h4>
+                <p>In examples with more vibrant and contrasting colors, we observe how sharpening really does
+                    enhance the visual appeal by making details pop. For instance, in the festival and light show examples,
+                     the colorful lights and decorative set designs become more pronounced, giving the illusion that the image is
+                     somehow of higher quality and detail. 
+                </p>
+            </div>
+        </section>
+
+        <!-- Part 2.2: Hybrid Images -->
+        <section class="section">
+            <h2>Part 2.2: Hybrid Images</h2>
+            <p>Hybrid images change interpretation based on viewing distance by combining low frequencies from one image with high frequencies from another.</p>
+
+            <h3>Derek + Nutmeg (Complete Process)</h3>
+            <p>Detailed walkthrough of the hybrid image creation process:</p>
+            <ol>
+                <li>Align the images based on key facial features (eyes).</li>
+                <li>Apply low-pass filter to Derek and high-pass filter to Nutmeg.</li>
+                <li>Combine filtered images (addition) to create the hybrid image.</li>
+                <li>Visualize each step with corresponding FFTs.</li>
+            </ol>
+
+            <h4>1. Original and Aligned Images</h4>
+            <div class="image-container">
+                <div class="image-item">
+                    <img src="images/derek_original.png" alt="Derek Original">
+                    <div class="image-caption">Derek - Original</div>
+                </div>
+                <div class="image-item">
+                    <img src="images/nutmeg_original.png" alt="Nutmeg Original">
+                    <div class="image-caption">Nutmeg - Original</div>
+                </div>
+                <div class="image-item">
+                    <img src="images/derek_aligned.png" alt="Derek Aligned">
+                    <div class="image-caption">Derek - Aligned</div>
+                </div>
+                <div class="image-item">
+                    <img src="images/nutmeg_aligned.png" alt="Nutmeg Aligned">
+                    <div class="image-caption">Nutmeg - Aligned</div>
+                </div>
+            </div>
+
+            <h4>2. Frequency Analysis (Fourier Transforms)</h4>
+            <div class="image-container">
+                <div class="image-item">
+                    <img src="images/derek_fft.png" alt="Derek FFT">
+                    <div class="image-caption">Derek - FFT</div>
+                </div>
+                <div class="image-item">
+                    <img src="images/nutmeg_fft.png" alt="Nutmeg FFT">
+                    <div class="image-caption">Nutmeg - FFT</div>
+                </div>
+            </div>
+
+            <h4>3. Filtered Images</h4>
+            <div class="image-container">
+                <div class="image-item">
+                    <img src="images/derek_low_pass.png" alt="Derek Low Pass">
+                    <div class="image-caption">Derek - Low Pass (σ=2.0)</div>
+                </div>
+                <div class="image-item">
+                    <img src="images/nutmeg_high_pass.png" alt="Nutmeg High Pass">
+                    <div class="image-caption">Nutmeg - High Pass (σ=2.5)</div>
+                </div>
+            </div>
+
+            <h4>4. Filtered FFTs</h4>
+            <div class="image-container">
+                <div class="image-item">
+                    <img src="images/derek_low_fft.png" alt="Derek Low Pass FFT">
+                    <div class="image-caption">Derek Low Pass - FFT</div>
+                </div>
+                <div class="image-item">
+                    <img src="images/nutmeg_high_pass_fft.png" alt="Nutmeg High Pass FFT">
+                    <div class="image-caption">Nutmeg High Pass - FFT</div>
+                </div>
+            </div>
+
+            <h4>5. Final Hybrid Image</h4>
+            <div class="image-container">
+                <div class="image-item">
+                    <img src="images/derek_nutmeg_hybrid_image.png" alt="Derek Nutmeg Hybrid">
+                    <div class="image-caption">Derek + Nutmeg Hybrid</div>
+                </div>
+                <div class="image-item">
+                    <img src="images/hybrid_fft.png" alt="Hybrid FFT">
+                    <div class="image-caption">Hybrid - FFT</div>
+                </div>
+            </div>
+
+            <div class="comment-section">
+                <h4>Parameter Selection:</h4>
+                <p>I used a cutoff of >= 89.0 in pixel intensity for my nutmeg edge detector (low pass)
+                    as this resulted in a relatively accurate image. I was also relatively aggressive in
+                setting the kernel size and sigma values for both filters in this process, with a kernel size
+            of 23 and guassian sigma = 2.5 for nutmeg and guassian sigma = 2.0 for the smoothing of Derek.
+        This resulted in a better looking hybrid image that better blended the two images together. </p>
+            </div>
+
+            <h3>Additional Hybrid Images</h3>
+            
+            <h4>Example 2: My brother and myself; I alligned these on our 2 eyes following a similar methodlogy as Nutmeg and Derek. I found this one
+                to be particularly interesting as people often say that my brother and I look nearly identical. This is compounded by the fact
+                that our Iphone's FaceID is unable to differentiate between us, as I am able to unlock his phone and vice versa. As you can see in the hybrid image,
+                despite there being a large multplier for the high pass image (edge detector), the images look very well blended toegher compared to my other example
+                which I believe speaks to our similaries in facial structure and features. So perhaps people are somewhat correct when they say we are look alike.
+            </h4>
+            <div class="image-container">
+                <div class="image-item">
+                    <img src="images/chris_original.png" alt="Hybrid 2 Image 1">
+                    <div class="chris_original">My Brother - Original</div>
+                </div>i
+                <div class="image-item">
+                    <img src="images/ryan_original.png" alt="Hybrid 2 Image 2">
+                    <div class="me_original">Me - Original</div>
+                </div>
+                <div class="image-item">
+                    <img src="images/brothers_hybrid.png" alt="Hybrid 2 Result">
+                    <div class="image-caption">Hybrid Image</div>
+                </div>
+            </div>
+
+            <h4> Frequency Analysis (Fourier Transforms) for Example 2 </h4>
+            <div class="image-container">
+                <div class="image-item">
+                    <img src="images/ryan_fft.png" alt="Derek FFT">
+                    <div class="image-caption">Ryan (ME) - FFT</div>
+                </div>
+                <div class="image-item">
+                    <img src="images/chris_fft.png" alt="Nutmeg FFT">
+                    <div class="image-caption">My Brother - FFT</div>
+                </div>
+                <div class="image-item">
+                    <img src="images/hybrid_fft_bro.png" alt="Nutmeg FFT">
+                    <div class="image-caption">Hybrid - FFT</div>
+                </div>
+            </div>
+            
+
+            <h4>Example 3: My Brother and a Corgi: This hybrid was choosen just for the simple reason that my brother and I really enjoy Corgis. 
+                In comparision to the previous example, there is a significant difference between the images which allows you to perceive the effect of derek and nutmeg more easily. What I mean by this is that
+                when looking up close, you can easily see the Corgi, but as you move away you mostly see my brother's face. I think this is a good example of a hybrid image as the two images are very different
+            </h4>
+            <div class="image-container">
+                <div class="image-item">
+                    <img src="images/chris_original.png" alt="Hybrid 3 Image 1">
+                    <div class="image-caption">My Brother - Original</div>
+                </div>
+                <div class="image-item">
+                    <img src="images/corgi_original.png" alt="Hybrid 3 Image 2">
+                    <div class="image-caption">Corgi - Orignal</div>
+                </div>
+                <div class="image-item">
+                    <img src="images/hybrid_corgi.png" alt="Hybrid 3 Result">
+                    <div class="image-caption">Hybrid Result</div>
+                </div>
+            </div>
+
+            <div class="comment-section">
+                <h4>Hybrid Image Analysis:</h4>
+                <p>Overall, this section brought to my attention the importance of parameter setting and the selection of images when creating hybrid ones. To be more specific, 
+                    greater magnitude Guassian sigma values and larger kernels will result in more aggressive smoothing and thus a more extreme high and low pass filter respectively. On the other hand
+                for hybrid images, those that are similar will be harder to differentiate when superimposed on each other. But images that are quite different in structure will be more obvious, and
+            is likewise easier to see the intended impact on hybrid images. </p>
+            </div>
+
+
+        </section>
+
+        <!-- Part 2.3: Gaussian and Laplacian Stacks -->
+        <section class="section">
+            <h2>Part 2.3: Gaussian and Laplacian Stacks</h2>
+            <p>The implementation of Gaussian and Laplacian stacks involved continuously applying a Gaussian filter to an image,
+                and then subtracting the blurred image from the previous level to obtain the Laplacian. 
+                This process was repeated for multiple levels to create a multi-resolution representation of the image.
+            </p>
+
+
+            <h3>Apple and Orange Gaussian and Laplacian Stacks</h3>
+            <p>Here are the combined Gaussian and Laplacian stacks for the Apple and Orange images, which shows how different frequency components are separated across multiple resolution levels.</p>
+
+            <h4>Apple Stacks</h4>
+            <div class="image-container">
+                <div class="image-item large">
+                    <img src="images/apple_stacks.png" alt="Apple Stacks" style="width: 100%; height: auto; max-width: 800px; object-fit: contain;">
+                    <div class="image-caption">Apple - Combined Gaussian and Laplacian Stacks<br>Top row: Gaussian Stack (levels 0-4)<br>Bottom row: Laplacian Stack (levels 0-4)</div>
+                </div>
+            </div>
+
+            <h4>Orange Stacks</h4>
+            <div class="image-container">
+                <div class="image-item large">
+                    <img src="images/orange_stacks.png" alt="Orange Stacks" style="width: 100%; height: auto; max-width: 800px; object-fit: contain;">
+                    <div class="image-caption">Orange - Combined Gaussian and Laplacian Stacks<br>Top row: Gaussian Stack (levels 0-4)<br>Bottom row: Laplacian Stack (levels 0-4)</div>
+                </div>
+            </div>
+
+            <h4>Multiresolution Analysis (Figure 3.42)</h4>
+            <div class="image-container">
+                <div class="image-item large">
+                    <img src="images/grid.png" alt="Orange Stacks" style="width: 100%; height: auto; max-width: 800px; object-fit: contain;">
+                    <div class="image-caption">Left column: Level 0, Level 2, Level 4, Final Contributions of Apple to the Oraple<br>Middle column: Level 0, Level 2, Level 4, Final Contributions of Orange to the Oraple<br>Right column: Level 0, Level 2, Level 4, Final Level of Combined Contribution to the Oraple</div>
+                </div>
+            </div>
+
+        <!-- Part 2.4: Multiresolution Blending -->
+        <section class="section">
+            <h2>Part 2.4: Multiresolution Blending (The Oraple!)</h2>
+            <p>Using the Gaussian and Laplacian stacks as described in part 2.3, here we created a smoothly blended version of the 2 images with a mask filter (vertical in the oraple case).
+                The blending is done by combining the Laplacian stacks of both images at each level, weighted by the corresponding Gaussian mask at that level, which increases the futher down you go
+                in the stack. More specifically, the blending at each level was computed as: L_combined = G_mask * L_image1 + (1 - G_mask) * L_image2. 
+                The final blended image is reconstructed from the summation of the blended Laplacian levels, resulting in a seamless transition between the two images. I used 5 levels and a sigma value of 2.0
+                for my Gaussian filters in this process, which provided a good balance between detail preservation and smooth blending.
+            </p>
+
+
+
+            <h3>The Oraple (Apple-Orange Blend)</h3>
+            <div class="image-container">
+                <div class="image-item">
+                    <img src="images/apple.png" alt="Apple">
+                    <div class="image-caption">Apple (Original)</div>
+                </div>
+                <div class="image-item">
+                    <img src="images/orange.png" alt="Orange">
+                    <div class="image-caption">Orange (Original)</div>
+                </div>
+                <div class="image-item">
+                    <img src="images/basic_mask.png" alt="Vertical Mask">
+                    <div class="image-caption">Vertical Blending Mask</div>
+                </div>
+                <div class="image-item">
+                    <img src="images/oraple.png" alt="Oraple">
+                    <div class="image-caption">Oraple (Final Result)</div>
+                </div>
+            </div>
+
+            <h3>Additional Creative Blends</h3>
+            
+            <h4>Noodle Fusion: Here I mixed 2 of my favorite noodle soup dishes that I love to eat. The blending here could have been improved by picking images that had similar
+                bowl color as well as broth color.
+            </h4>
+            <p></p>
+            <div class="image-container">
+                <div class="image-item">
+                    <img src="images/udon.png" alt="Udon">
+                    <div class="image-caption">Udon Noodles</div>
+                </div>
+                <div class="image-item">
+                    <img src="images/ramen.png" alt="Ramen">
+                    <div class="image-caption">Ramen Noodles</div>
+                </div>
+                <div class="image-item">
+                    <img src="images/noodles_blended.png" alt="Noodles Blend">
+                    <div class="image-caption">Blended Noodle Result</div>
+                </div>
+            </div>
+
+            <h3>Irregular Mask Example</h3>
+            
+            <h4> Hand + My Brother. I took inspiration from the examples in lecture and blended my brother's face in the middle of a picture of a hand.
+                This involved using an irregular mask that was an oval, which I calcualted by creating an elliptical gaussian and then following the same
+                process as above where the first level is a full binary mask, and then progressively blurred.
+            </h4>
+            <p></p>
+            <div class="image-container">
+                <div class="image-item">
+                    <img src="images/chris_original.png" alt="Udon">
+                    <div class="image-caption">My Brother - Original</div>
+                </div>
+                <div class="image-item">
+                    <img src="images/hand_original.png" alt="Ramen">
+                    <div class="image-caption">Hand - Original</div>
+                </div>
+                <div class="image-item">
+                    <img src="images/chris_hand_blended.png" alt="Ramen">
+                    <div class="image-caption">Blended Result</div>
+                </div>
+                <div class="image-item">
+                    <img src="images/chris_hand_mask.png" alt="Noodles Blend">
+                    <div class="image-caption">Oval Mask Used</div>
+                </div>
+            </div>
+
+            
+        </section>
+
+        <!-- Conclusion -->
+        <section class="section">
+            <h2>Conclusion</h2>
+            <div class="comment-section">
+                <h4>Project Summary:</h4>
+                <p>This project showed me how some editing techniques that I have utilized or seen online really work under the hood, which I thought was very interesting. I particularly
+                    found the section that had us sharpen images to be very interesting as I never realized beforehand that sharpening images is really just adding more of the high
+                frequency components to the image. I also really enjoyed the section that had us implement hybrid images, as I finally got to investigate the similarities in facial strucure between my brother and I.
+            I had always wondered why Iphone FaceID had difficulty in differentiating between us, but after this project I can kind of see why.</p>
+                
+                <h4>Key Learnings:</h4>
+                <ul>
+                    <li>Better understanding of the frequency domain, and how each component contributes to composing an image</li>
+                    <li>How to construct low and high pass filters, and what each do to an image respectively</li>
+                    <li>What the Laplacian stack represents for an image, and how it can be utilized to abstract certain frequencies of an image for blending</li>
+                </ul>
+            </div>
+        </section>
+    </div>
+</body>
+</html>
